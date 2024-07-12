@@ -2,17 +2,35 @@
 version: 2
 sources:
   - name: raw_layer
-    meta:
-      external_location: ./raw_data/{name}.csv
     description: The raw data obtained from the assignment to be ingested
     tables:
       - name: categories
         config:
           tags: [raw_layer]
+        columns:
+          - name: category_id
+            type: int
+            tests: [not_null, unique]
+          - name: category_name
+            type: string
+            tests: [not_null]
 
       - name: customers
         config:
           tags: [raw_layer]
+        columns:
+          - name: customer_id
+            type: int
+            tests: [not_null, unique]
+          - name: company_name
+            type: string
+            tests: [not_null]
+          - name: contact_name
+            type: string
+            tests: [not_null]
+          - name: contact_title
+            type: string
+            tests: [not_null]
 
       - name: employees
         config:
