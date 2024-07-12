@@ -1,7 +1,11 @@
-.PHONY: check_dbt run_containers stop_containers setup 
+.PHONY: check_dbt run_containers stop_containers setup clean
 
-dbt_shell:
-	docker exec postgres:12.17 psql -h postgres -U postgres
+
+clean: 
+	@docker ps -a --filter "name=dbt-run" --format "{{.ID}}" | xargs docker rm -f
+
+enter_psql:
+	@docker exec -it postgres psql -h postgres -U postgres postgres
 
 test_dbt:
 	docker-compose --project-name feldm_case run dbt test
