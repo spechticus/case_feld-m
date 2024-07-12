@@ -7,6 +7,9 @@ clean:
 enter_psql:
 	@docker exec -it postgres psql -h postgres -U postgres postgres
 
+build_dbt:
+	docker-compose --project-name feldm_case run dbt build
+
 test_dbt:
 	docker-compose --project-name feldm_case run dbt test
 
@@ -23,15 +26,11 @@ run_containers:
 stop_containers:
 	docker-compose --project-name feldm_case down
 
-setup: install_packages
 
-install_packages: setup_pyenv
-	pip install dbt-postgres
-	@echo "assigning DBT_PROFILES_DIR"
-	export DBT_PROFILES_DIR=$(CURDIR)
-
-setup_pyenv:
+setup:
 	@echo "Setting up python environment..."
 	python3 -m venv ./venv
+	pip install -r requirements.txt
 	. venv/bin/activate
-	@echo "Installing dependencies..."
+	@echo "assigning DBT_PROFILES_DIR"
+	export DBT_PROFILES_DIR=$(CURDIR)
