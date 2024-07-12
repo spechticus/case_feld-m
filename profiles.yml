@@ -1,0 +1,12 @@
+case_feldm:
+  outputs:
+    dev:
+      dbname: postgres
+      host: postgres
+      pass: postgres
+      port: 5432
+      schema: postgres
+      threads: 1
+      type: postgres
+      user: postgres
+  target: dev
