@@ -1,0 +1,56 @@
+# This file exists to make sure the column types are parsed correctly by Pandas before uploading them to the database
+
+column_types:
+  categoryID: int
+  categoryName: string
+  description: string
+  picture: string
+  customerID: string
+  companyName: string
+  contactName: string
+  contactTitle: string
+  address: string
+  city: string
+  region: string
+  postalCode: string
+  country: string
+  phone: string
+  fax: string
+  employeeID: int
+  lastName: string
+  firstName: string
+  title: string
+  titleOfCourtesy: string
+  notes: string
+  photo: string
+  homePhone: string
+  extension: int
+  reportsTo: string
+  photoPath: string
+  orderID: int
+  productID: int
+  unitPrice: float
+  quantity: int
+  discount: float
+  shipName: string
+  shipAddress: string
+  shipCity: string
+  shipRegion: string
+  shipPostalCode: string
+  shipCountry: string
+  shipVia: int
+  freight: float
+  productName: string
+  quantityPerUnit: string
+  unitsInStock: int
+  unitsOnOrder: int
+  reorderLevel: int
+  discontinued: int
+  shipperID: int
+
+parse_dates:
+  - requiredDate
+  - shippedDate
+  - orderDate
+  - hireDate
+  - birthDate

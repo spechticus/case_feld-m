@@ -1,6 +1,7 @@
 import logging
 import os
 import inflection
+import yaml
 import pandas as pd
 from sqlalchemy import create_engine, text
 
@@ -26,14 +27,42 @@ with engine.connect() as conn:
     with conn.begin():
         conn.execute(text("CREATE SCHEMA IF NOT EXISTS raw_layer"))
 
+
+# Load the column types from a YAML configuration file
+with open("raw_data/column_types.yml", "r") as file:
+    config = yaml.safe_load(file)
+
+column_types = config["column_types"]
+parse_dates = config.get("parse_dates", [])
+
 # get the file names of all CSV files in the folder "raw_data"
 raw_data_files = [file for file in os.listdir("raw_data") if file.endswith(".csv")]
 logger.debug(f"Found {len(raw_data_files)} files")
 
 for file in raw_data_files:
     file_short = file.replace(".csv", "")
-    # Load your CSV file into a DataFrame
-    df = pd.read_csv(f"raw_data/{file}")
+
+    # Load the CSV file without any type inference
+    df = pd.read_csv(f"raw_data/{file}", nrows=0)
+    actual_columns = df.columns.tolist()
+
+    # Filter out columns not present in the actual data
+    actual_parse_dates = [col for col in parse_dates if col in actual_columns]
+    actual_column_types = {
+        col: dtype for col, dtype in column_types.items() if col in actual_columns
+    }
+
+    # Load your CSV file into a DataFrame with specified column types and parse dates
+    try:
+        df = pd.read_csv(
+            f"raw_data/{file}",
+            dtype=actual_column_types,
+            parse_dates=actual_parse_dates,
+        )
+    except Exception as e:
+        logger.error(f"Failed to load {file}: {e}")
+        continue
+
     # Make column names lowercase for better SQL handling
     df.columns = [inflection.underscore(col) for col in df.columns]
     logger.debug(f"Successfully loaded {file}")
