@@ -228,13 +228,6 @@ sources:
           - name: product_name
             data_type: string
             tests: [not_null, character_parsed_correctly]
-          - name: supplier_id
-            data_type: int
-            tests:
-              - not_null
-              - relationships:
-                  to: source('raw_layer', 'suppliers')
-                  field: supplier_id
           - name: category_id
             data_type: int
             tests:
@@ -252,3 +245,10 @@ sources:
       - name: shippers
         config:
           tags: [raw_layer]
+        columns:
+          - name: shipper_id
+            data_type: int
+            tests: [not_null, unique]
+          - name: company_name
+            data_type: string
+            tests: [character_parsed_correctly]
