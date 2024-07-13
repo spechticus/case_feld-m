@@ -9,10 +9,10 @@ sources:
           tags: [raw_layer]
         columns:
           - name: category_id
-            type: int
+            data_type: int
             tests: [not_null, unique]
           - name: category_name
-            type: string
+            data_type: string
             tests: [not_null]
 
       - name: customers
@@ -20,25 +20,80 @@ sources:
           tags: [raw_layer]
         columns:
           - name: customer_id
-            type: int
+            data_type: int
             tests: [not_null, unique]
           - name: company_name
-            type: string
-            tests: [not_null]
+            data_type: string
+            tests: [not_null, character_parsed_correctly]
           - name: contact_name
-            type: string
-            tests: [not_null]
-          - name: contact_title
-            type: string
-            tests: [not_null]
+            data_type: string
+            tests: [not_null, character_parsed_correctly]
 
       - name: employees
         config:
           tags: [raw_layer]
+        columns:
+          - name: employee_id
+            data_type: int
+            tests: [not_null, unique]
+          - name: first_name
+            data_type: string
+            tests: [character_parsed_correctly]
+          - name: last_name
+            data_type: string
+            tests: [character_parsed_correctly]
+          - name: birth_date
+            data_type: date
+            tests:
+              - dbt_utils.accepted_range:
+                  # The hire_dates are all in the 1990s, so we will assume
+                  # the year 2000 as a reference point for reasonable age of the employees
+                  # All employees are assumed to be 18-80 years old in the year 2000
+                  max_value: "'2000-01-01'::DATE - interval '18' year"
+                  min_value: "'2000-01-01'::DATE - interval '80' year"
+          - name: hire_date
+            data_type: date
+            tests:
+              - dbt_utils.accepted_range:
+                  # Since we above assumed that all employees are 18-80 years old in the year 2000:
+                  # max_value: we will assume that all employees cannot thus be hired later than the year 2000
+                  # min_value: when you were 80 years old in the year 2000, and you were hired at 18, you were hired 62 years before 2000.
+                  max_value: "'2000-01-01'::DATE"
+                  min_value: "'2000-01-01'::DATE - interval '62' year"
+          - name: address
+            data_type: string
+            tests: [not_null, character_parsed_correctly]
+          - name: city
+            data_type: string
+            tests: [not_null, character_parsed_correctly]
+          - name: region
+            data_type: string
+            tests: [character_parsed_correctly]
+          - name: postal_code
+            data_type: string
+            tests: [not_null]
+          - name: country
+            data_type: string
+            tests: [not_null]
 
       - name: order_details
         config:
           tags: [raw_layer]
+        columns:
+          - name: order_id
+            data_type: int
+            tests:
+              - not_null
+              - relationships:
+                  to: ref('orders')
+                  field: order_id
+          - name: product_id
+            data_type: int
+            tests:
+              - not_null
+              - relationships:
+                  to: ref('products')
+                  field: product_id
 
       - name: orders
         config:
