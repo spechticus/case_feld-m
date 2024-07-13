@@ -2,6 +2,7 @@
 
 
 clean: 
+	dbt clean
 	@docker ps -a --filter "name=dbt-run" --format "{{.ID}}" | xargs docker rm -f
 
 enter_psql:
@@ -34,3 +35,4 @@ setup:
 	. venv/bin/activate
 	@echo "assigning DBT_PROFILES_DIR"
 	export DBT_PROFILES_DIR=$(CURDIR)
+	docker-compose --project-name feldm_case run dbt deps
