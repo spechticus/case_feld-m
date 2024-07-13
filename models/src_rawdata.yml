@@ -92,8 +92,22 @@ sources:
             tests:
               - not_null
               - relationships:
-                  to: ref('products')
+                  to: source('raw_layer', 'products')
                   field: product_id
+          - name: unit_price
+            data_type: numeric
+            tests:
+              - not_null
+              - property_equal_to_reference:
+                  id_column: product_id
+                  reference_table: source('raw_layer', 'products')
+
+          - name: quantity
+            data_type: int
+            tests: [not_null]
+          - name: discount
+            data_type: numeric
+            tests: [not_null]
 
       - name: orders
         config:
