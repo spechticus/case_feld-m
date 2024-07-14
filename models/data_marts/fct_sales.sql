@@ -3,6 +3,7 @@ SELECT
     od.product_id,
     o.customer_id,
     o.customer_company_name_cleaned,
+    o.customer_country,
     o.order_date,
     MIN(order_date) OVER (PARTITION BY o.customer_id) AS date_of_first_order,
     CASE
