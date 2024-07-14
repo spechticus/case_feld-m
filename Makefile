@@ -11,6 +11,9 @@ enter_psql:
 build_dbt:
 	docker-compose --project-name feldm_case run dbt build
 
+snapshot:
+	docker-compose --project-name feldm_case run dbt snapshot
+
 test_dbt:
 	docker-compose --project-name feldm_case run dbt test
 
