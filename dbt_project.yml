@@ -32,8 +32,11 @@ snapshots:
 models:
   case_feldm:
     transformed:
-      +materialized: table
-      +schema: transformed
+      +materialized: view
+      schema: transformed
     data_marts:
       +materialized: table
-      +schema: data_marts
+      schema: data_marts
+    staging:
+      +materialized: view
+      schema: staging
