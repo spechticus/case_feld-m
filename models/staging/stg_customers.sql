@@ -13,6 +13,17 @@ SELECT
    {{ replace_local_characters('a.company_name') }} AS company_name_clean,
    a.contact_name AS contact_name_local,
    {{ replace_local_characters('a.contact_name') }} AS contact_name_clean,
+   a.contact_title,
+   a.address AS address_local,
+   {{ replace_local_characters('a.address') }} AS address_clean,
+   a.city AS city_local,
+   {{ replace_local_characters('a.city') }} AS city_clean,
+   a.region,
+   a.postal_code,
+   a.country,
+   a.phone,
+   {{ phone_number_to_e164(phone_number='a.phone', country_column='a.country') }} AS phone_e164,
+   a.fax
    
 
 
