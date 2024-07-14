@@ -5,7 +5,7 @@ case_feldm:
       host: postgres
       pass: postgres
       port: 5432
-      schema: postgres
+      schema: models
       threads: 1
       type: postgres
       user: postgres
