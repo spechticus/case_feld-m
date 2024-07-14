@@ -1,5 +1,9 @@
 -- macros/replace_local_characters.sql
 {% macro replace_local_characters(input_string) %}
+
+{# This is a dictionary of to be replaced characters that we will later use in a nested 
+call to the REPLACE() function.#}
+
   {% set replacements = {
         'ä': 'ae',
         'ö': 'oe',
@@ -48,11 +52,19 @@
         'ű': 'u'
   } %}
 
-  {% set result_string = input_string %}
 
+
+  {% set nested_replace = input_string %}
+
+    {# It is R_E_A_L_L_Y annoying to nest function calls inside a Jinja loop because variables
+    set inside a loop cannot be carried over to outside the loop. To fix this,
+    you can use namespaces.#}
+
+  {% set ns = namespace(replace_expr=input_string) %}
+  
   {% for key, value in replacements.items() %}
-    {% set result_string = result_string | replace(key, value) %}
+    {% set ns.replace_expr = "replace(" ~ ns.replace_expr ~ ", '" ~ key ~ "', '" ~ value ~ "')" %}
   {% endfor %}
-
-  {{ return(result_string) }}
+  
+  {{ ns.replace_expr }}
 {% endmacro %}
