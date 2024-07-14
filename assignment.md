@@ -14,6 +14,7 @@ They're selling various products to customers globally. In this repository, you 
    1. A transactional fact table for sales, with the grain set at the product level, and the following additional dimensions and metrics:
       1. new or returning customer
       2. number of days between first purchase and last purchase
+         *I was confused as to what "the last purchase" would be in a table that is required to be at the product level.*
       
    2. A dimension table for “customers”, with the grain set at the customer_id, and the following additional dimensions and metrics:
       1. number of orders
