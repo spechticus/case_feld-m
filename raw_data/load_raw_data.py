@@ -65,6 +65,9 @@ for file in raw_data_files:
 
     # Make column names lowercase for better SQL handling
     df.columns = [inflection.underscore(col) for col in df.columns]
+    # Add an "uploaded_at" column with the current timestamp
+    df["uploaded_at"] = pd.Timestamp.now()
+
     logger.debug(f"Successfully loaded {file}")
 
     with engine.connect() as conn:
