@@ -3,10 +3,11 @@ WITH sales_by_order AS (
     SELECT
         s.customer_id,
         s.order_id,
+        s.date_of_first_order,
         SUM(s.total_amount_od) AS total_amount_od,
         SUM(s.total_amount_p) AS total_amount_p
     FROM {{ ref('fct_sales') }} s
-    GROUP BY 1,2
+    GROUP BY 1,2,3
 ),
 -- we calculate the max amounts in a separate CTE
 -- to not compromise the grain when joining to the main query
@@ -14,6 +15,7 @@ sales_by_customer AS (
     
     SELECT 
         sbo.customer_id,
+        sbo.date_of_first_order,
         MAX(sbo.total_amount_od) AS max_amount_od,
         MAX(sbo.total_amount_p) AS max_amount_p,
         SUM(sbo.total_amount_od) AS total_amount_by_customer_od,
@@ -21,7 +23,7 @@ sales_by_customer AS (
         ROW_NUMBER() OVER (ORDER BY SUM(sbo.total_amount_od) DESC) AS sales_rank_od,
         ROW_NUMBER() OVER (ORDER BY SUM(sbo.total_amount_p) DESC) AS sales_rank_p
     FROM sales_by_order AS sbo
-    GROUP BY 1
+    GROUP BY 1,2
 
 )
 
@@ -38,6 +40,7 @@ SELECT
     c.country,
     c.phone,
     c.fax,
+    sbc.date_of_first_order,
     sbc.max_amount_od,
     sbc.max_amount_p,
     CASE
@@ -57,4 +60,4 @@ LEFT JOIN {{ ref('stg_orders') }} o
     USING (customer_id)
 LEFT JOIN sales_by_customer AS sbc
     USING (customer_id)
-{{ dbt_utils.group_by(n=16) }}
+{{ dbt_utils.group_by(n=17) }}

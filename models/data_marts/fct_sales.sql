@@ -30,4 +30,3 @@ SELECT
 FROM {{ ref('stg_order_details') }} od
 LEFT JOIN {{ ref('stg_orders') }} AS o USING (order_id)
 LEFT JOIN {{ ref('stg_products') }} AS P USING (product_id)
-{# dbt_utils.group_by(n=8) #}

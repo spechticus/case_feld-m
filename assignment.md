@@ -21,7 +21,7 @@ They're selling various products to customers globally. In this repository, you 
       2. value of most expensive order
       3. whether it’s one of the top 10 customers (by revenue generated)
 
-   3. A dimension table for monthly cohorts, with the grain set at country leveland the following additional dimensions and metrics:
+   3. A dimension table for monthly cohorts, with the grain set at country level and the following additional dimensions and metrics:
       1. Number of customers in the monthly cohort (customers are assigned in cohorts based on date of their first purchase)
       2. Cohort's total order value
    * Note: Every cohort should be available, even when the business didn't acquire a new customer that month (for the full timerange of order dates).

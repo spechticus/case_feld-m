@@ -26,10 +26,15 @@
         - 22 cases of mismatching cities for two customers: One has different cities, the other is just a typo / format error.
         - 34 cases of mismatching customer names for 5 customers: All of them are just formatting mistakes: missing apostrophes, missing special characters, typos. Normalising could eliminate most of them.
 
+- TODO finish cleaning up dimensions (e.g. getting rid of numbers in cities)
+
 # Transformation and Business Logic
 
 - I am implementing snapshots to keep track of slowly changing dimensions like customer, employees, or product properties. Thus, we can track changes over time and in a controlled manner and can e.g. correctly assign a customer to different states when comparing multiple time periods and so on. We will use the `uploaded_at` timestamp provided by our Python loading script.
 
 - addresses / localisation / de-localisation / standardisation: Architecture choice between adding normalised column to a table or creating separate tables with normalised data to be joined. Since I am using PostgreSQL which is row-based, adding more columns does not significantly alter performance AND since we are dealing with a small dataset.
 
+- TODO tests for business logic
+
 # Final Data Marts
+- TODO: Indices
