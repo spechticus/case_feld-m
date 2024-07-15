@@ -39,3 +39,29 @@ models:
           expression: SUM(total_cohort_amount_p)
           compare_model: ref("fct_sales")
           compare_expression: SUM(total_amount_p)
+    columns:
+      - name: cohort_month
+        tests:
+          - not_null
+      - name: cohort_country
+        tests:
+          - not_null
+      - name: customer_count
+        tests:
+          - not_null
+      - name: total_cohort_amount_od
+        tests:
+          - not_null
+      - name: total_cohort_amount_p
+        tests:
+          - not_null
+  - name: fct_sales
+    description: Fact model for sales
+    tags: [data_mart, sales]
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: total_amount_od > 0 AND total_amount_p > 0
+      - dbt_utils.expression_is_true:
+          expression: "ROUND((quantity::NUMERIC * unit_price_orderdetails::NUMERIC) * (1 - discount::NUMERIC), 2) = ROUND(total_amount_od, 2)"
+      - dbt_utils.expression_is_true:
+          expression: "ROUND((quantity::NUMERIC * unit_price_product::NUMERIC) * (1 - discount::NUMERIC), 2) = ROUND(total_amount_p, 2)"
