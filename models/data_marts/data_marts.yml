@@ -26,7 +26,7 @@ models:
       - rowcount_equal_to_aggregations_from_other_tables:
           aggregation_table_1: ref("dim_customer")
           aggregation_table_2: ref("fct_sales")
-          aggregation_expression_1: "COUNT(DISTINCT table1.country)"
+          aggregation_expression_1: "COUNT(DISTINCT country)"
           aggregation_expression_2: "COUNT(DISTINCT DATE_TRUNC('month', order_date))"
           operation: "*"
       # Does the total amount of all sales match with fct_sales?
