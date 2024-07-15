@@ -12,7 +12,7 @@ enter_psql:
 	@docker exec -it postgres psql -h postgres -U postgres postgres
 
 build_dbt:
-	docker-compose --project-name feldm_case run dbt build
+	docker-compose --project-name feldm_case run dbt build $(SELECTION)
 
 snapshot:
 	docker-compose --project-name feldm_case run dbt snapshot $(SELECTION)
