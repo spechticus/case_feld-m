@@ -20,6 +20,7 @@ To streamline the handling of the project, I set up a `Makefile` for wrapping th
 4. For a complete build run, you can execute `make build_dbt` which will just snapshot, run, and test the entire DAG.
 5. N.B. in this example, some of the source tests I have written will fail because there are inconsistencies in the source data you provided (see explanation and handling below), that's why the final data marts are skipped in `dbt build`. You can still run and inspect them by using `make run_dbt` which uses `dbt run` under the hood. 
 6. You can inspect the built models using any datbase management tool (e.g. DBeaver or TablePlus) on: `postgresql://postgres:postgres@localhost:5432/postgres`, as the Postgres container exposes port 5432.
+7. If you want to execute dbt commands inside the container with flags such as `--select`, you can pass the `$SELECTION` environmental variable, e.g. `make run_dbt SELECTION='-s path:models/data_marts'`
 
 
 

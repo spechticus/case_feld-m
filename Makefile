@@ -15,13 +15,13 @@ build_dbt:
 	docker-compose --project-name feldm_case run dbt build
 
 snapshot:
-	docker-compose --project-name feldm_case run dbt snapshot
+	docker-compose --project-name feldm_case run dbt snapshot $(SELECTION)
 
 test_dbt:
-	docker-compose --project-name feldm_case run dbt test
+	docker-compose --project-name feldm_case run dbt test $(SELECTION)
 
 run_dbt:
-	docker-compose --project-name feldm_case run dbt run
+	docker-compose --project-name feldm_case run dbt run $(SELECTION)
 
 load_rawdata:
 	python3 raw_data/load_raw_data.py
