@@ -1,6 +1,7 @@
 SELECT
     od.order_id,
     od.product_id,
+    cat.category_name,
     o.customer_id,
     o.customer_company_name_cleaned,
     o.customer_country,
@@ -31,3 +32,4 @@ SELECT
 FROM {{ ref('stg_order_details') }} od
 LEFT JOIN {{ ref('stg_orders') }} AS o USING (order_id)
 LEFT JOIN {{ ref('stg_products') }} AS P USING (product_id)
+LEFT JOIN {{ ref('stg_categories') }} AS cat USING (category_id)
