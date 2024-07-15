@@ -40,6 +40,23 @@ models:
     staging:
       +materialized: view
       schema: staging
+    dim_monthly_cohorts:
+      +post-hook:
+        - "CREATE INDEX IF NOT EXISTS idx_monthlycohorts_cohort_month ON {{ this }} (cohort_month)"
+        - "CREATE INDEX IF NOT EXISTS idx_monthlycohorts_cohort_country ON {{ this }} (cohort_country)"
+        - "CREATE INDEX IF NOT EXISTS idx_monthlycohorts_customerids ON {{ this }} (customer_ids)"
+    dim_customer:
+      +post-hook:
+        - "CREATE INDEX IF NOT EXISTS idx_customer_customerid ON {{ this }} (customer_id)"
+        - "CREATE INDEX IF NOT EXISTS idx_customer_customeridnumeric ON {{ this }} (customer_id_numeric)"
+        - "CREATE INDEX IF NOT EXISTS idx_customer_companynameclean ON {{ this }} (company_name_clean)"
+        - "CREATE INDEX IF NOT EXISTS idx_customer_contactnameclean ON {{ this }} (contact_name_clean)"
+        - "CREATE INDEX IF NOT EXISTS idx_customer_country ON {{ this }} (country)"
+    fct_sales:
+      +post-hook:
+        - "CREATE INDEX IF NOT EXISTS idx_fct_sales_customerid ON {{ this }} (customer_id)"
+        - "CREATE INDEX IF NOT EXISTS idx_fct_sales_orderid ON {{ this }} (order_id)"
+        - "CREATE INDEX IF NOT EXISTS idx_fct_sales_productid ON {{ this }} (product_id)"
 
 vars:
   "dbt_date:time_zone": "Europe/Berlin"
