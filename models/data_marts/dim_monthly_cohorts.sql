@@ -74,8 +74,8 @@ total_sales_by_cohort AS (
 -- Take the spine and join the data,
 -- COALESCE-ing where there are none
     SELECT
-        dcs.date_month,
-        dcs.country,
+        dcs.date_month AS cohort_month,
+        dcs.country AS cohort_country,
         COALESCE(co.customer_count, 0) AS customer_count,
         COALESCE(co.customer_id_array, ARRAY[]::INTEGER[]) AS customer_ids,
         COALESCE(tsc.total_cohort_amount_od, 0) AS total_cohort_amount_od,
@@ -89,4 +89,4 @@ total_sales_by_cohort AS (
     LEFT JOIN total_sales_by_cohort AS tsc
         ON dcs.date_month = tsc.cohort_month
         AND co.country = tsc.cohort_country
-    ORDER BY dcs.date_month, dcs.country
+    ORDER BY cohort_month, cohort_country
