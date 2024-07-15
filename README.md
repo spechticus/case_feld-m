@@ -6,19 +6,19 @@ I opted for a PostgreSQL database since I am very familiar with it and it is a v
 As an alternative, I considered DuckDB because you can just save it as a file in a local repository and thus have less overhead in an assignment like this that focusses on data modelling. In the end, I went with Postgres as it was a) explicitly stated in the assignment as a possible option and b) to model the situation where dbt needs to access a (remote) database (which is a much more realistic scenario).
 
 ## Environment
-For reproducibility reasons, I set up a Docker stack with ``docker-compose`` including a Postges container and a dbt container that is run through Docker.
+For reproducibility reasons, I set up a Docker stack with ``docker-compose`` including a PostgreSQL container and a dbt container that is run through Docker.
 
 In the repository itself I use Python for all necessary tooling work and have set up a virtual environment with the necessary packages as a `requirements.txt`.
 
 To streamline the handling of the project, I set up a `Makefile` for wrapping the most important console commands.
 
 # Setup: How to install and use
-0. Make sure you have the Docker engine up and running and Python 3.11 with pyenv installed. The scripts also just work on a Unix-based System, so MacOS or Linux. You would have to adapt the commands if you are on Windows.
+0. Make sure you have the Docker engine up and running and Python 3.11 with pyenv installed. The bash scripts in the Makefile also just work on a Unix-based System, so MacOS or Linux. You would have to adapt the commands if you are on Windows.
 1. Use `make setup` to initialise a new local Python virtual environment, install all dependencies, set up the Docker stack and install the dbt dependencies inside the container. In the Makefile, you can specify a later Python version you want to use if you do not have/want Python 3.11, but  Python<3.11 does not work.
 2. Use `make check_dbt` to run `dbt debug` in both the local version (for checking `profiles.yml` and `dbt_project.yml`) and the in-container version. The connection check on the local version will fail because it cannot directly access Postgres inside the container but **that is okay**, as long as the dbt version inside the container can connect.
 3. Before we can use our raw data inside the container, we now need to execute the upload script from the `raw_data/` folder using `make load_rawdata`. After it's done, you can inspect the results in the `./load_raw_data.log`.
 4. For a complete build run, you can execute `make build_dbt` which will just snapshot, run, and test the entire DAG.
-5. N.B. in this example, some of the source tests I have written will fail because there are inconsistencies in the source data you provided (see explanation and handling below), that's why the final data marts are skipped in `dbt build`. You can still run and inspect them by using `make run_dbt` which uses `dbt run` under the hood. 
+5. N.B. in this example, some of the source tests I have written will fail because there are inconsistencies in the source data you provided (see explanation and handling below), that's why the final data marts are skipped in `dbt build`. It is thus highly advised to run and inspect the final data marts by using `make run_dbt` which uses `dbt run` under the hood. 
 6. You can inspect the built models using any datbase management tool (e.g. DBeaver or TablePlus) on: `postgresql://postgres:postgres@localhost:5432/postgres`, as the Postgres container exposes port 5432.
 7. If you want to execute dbt commands inside the container with flags such as `--select`, you can pass the `$SELECTION` environmental variable, e.g. `make run_dbt SELECTION='-s path:models/data_marts'`
 
