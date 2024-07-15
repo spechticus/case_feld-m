@@ -94,10 +94,8 @@ For this, I wrote some custom macros.
 >**Adding columns vs. joining from lookup tables:** When transforming central columns like names, or addresses that might be used by multiple models, one option can be to create a separate lookup table for the transformed address and then later join the cleaned address from there. However, since we are using PostgreSQL which is row-based, adding more columns does not significantly alter the performance and we are not dealing with a large dataset. Thus, unless we need to join the address to a lot of different tables, just creating a new column through a cleaning macro is easier.
 
 
-## Workflow Step 7: Final Data Marts as specified in the assignment
+## Workflow Step 6: Final Data Marts as specified in the assignment
 
 Most of the tables should be self-explanatory: the marts are in the `data_marts` folder and the code + comment should suffice to understand the single steps taken
 
 When testing the models, however, I did notice that the number of rows in the `dim_monthly_cohorts` table does not seem to match my expectations. As we are approaching the deadline for the assignment, I don't have time to look into this.
-
-- TODO: Indices
