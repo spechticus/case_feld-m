@@ -91,13 +91,13 @@ After testing and snapshotting, we want to extract the snapshotted raw data into
 I added a couple of columns, mostly related to stripping special local characters (like Umlaute or so) from name columns for easier searching and matching AND because we have seen in our source tests above that this has been indeed a problem for data consistency (as in: mismatching data due to the presence and absence of special characters). 
 For this, I wrote some custom macros.
 
->**Adding columns vs. joining from lookup tables:** When transforming central columns like names, or addresses that might be used by multiple models, the 
+>**Adding columns vs. joining from lookup tables:** When transforming central columns like names, or addresses that might be used by multiple models, one option can be to create a separate lookup table for the transformed address and then later join the cleaned address from there. However, since we are using PostgreSQL which is row-based, adding more columns does not significantly alter the performance and we are not dealing with a large dataset. Thus, unless we need to join the address to a lot of different tables, just creating a new column through a cleaning macro is easier.
 
-## Workflow Step 6: Transformation and Business Logic
-
-- addresses / localisation / de-localisation / standardisation: Architecture choice between adding normalised column to a table or creating separate tables with normalised data to be joined. Since I am using PostgreSQL which is row-based, adding more columns does not significantly alter performance AND since we are dealing with a small dataset.
-
-- TODO tests for business logic
 
 ## Workflow Step 7: Final Data Marts as specified in the assignment
+
+Most of the tables should be self-explanatory: the marts are in the `data_marts` folder and the code + comment should suffice to understand the single steps taken
+
+When testing the models, however, I did notice that the number of rows in the `dim_monthly_cohorts` table does not seem to match my expectations. As we are approaching the deadline for the assignment, I don't have time to look into this.
+
 - TODO: Indices
