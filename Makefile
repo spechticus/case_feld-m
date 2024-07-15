@@ -1,3 +1,4 @@
+SHELL := /bin/bash
 .PHONY: check_dbt run_containers stop_containers setup clean
 
 
@@ -20,9 +21,14 @@ test_dbt:
 run_dbt:
 	docker-compose --project-name feldm_case run dbt run
 
+load_rawdata:
+	python3 raw_data/load_raw_data.py
+
 check_dbt:
 	@echo "running dbt debug"
-	dbt debug
+	-dbt debug
+	@echo "running dbt debug for the container version"
+	docker-compose --project-name feldm_case run dbt debug
 
 run_containers:
 	docker-compose --project-name feldm_case up -d
@@ -33,9 +39,10 @@ stop_containers:
 
 setup:
 	@echo "Setting up python environment..."
-	python3 -m venv ./venv
-	pip install -r requirements.txt
+	python3.11 -m venv ./venv
+	bash -c "source ./venv/bin/activate"
 	. venv/bin/activate
+	pip3.11 install -r requirements.txt
 	@echo "assigning DBT_PROFILES_DIR"
 	export DBT_PROFILES_DIR=$(CURDIR)
 	docker-compose --project-name feldm_case run dbt deps

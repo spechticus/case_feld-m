@@ -5,6 +5,16 @@
     - For better reproducibility, I set up the database inside a Docker container stack including a dbt container that is run through Docker
 - Makefile for wrapping the most important commands
 
+## How to install and use
+0. Make sure you have the Docker engine up and running and Python 3.11 with pyenv installed. The scripts also just work on a Unix-based System, so MacOS or Linux. You would have to adapt the commands if you are on Windows.
+1. Use `make setup` to initialise a new local Python virtual environment, install all dependencies, set up the Docker stack and install the dbt dependencies inside the container. In the Makefile, you can specify a later Python version you want to use if you do not have/want Python 3.11, but  Python<3.11 does not work.
+2. Use `make check_dbt` to run `dbt debug` in both the local version (for checking `profiles.yml` and `dbt_project.yml`) and the in-container version. The connection check on the local version will fail because it cannot directly access Postgres inside the container but **that is okay**, as long as the dbt version inside the container can connect.
+3. Before we can use our raw data inside the container, we now need to execute the upload script from the `raw_data/` folder using `make load_rawdata`. After it's done, you can inspect the results in the `./load_raw_data.log`.
+4. For a complete build run, you can execute `make build_dbt` which will just snapshot, run, and test the entire DAG.
+5. N.B. in this example, some of the source tests I have written will fail because there are inconsistencies in the source data you provided (see explanation and handling below), that's why the final data marts are skipped in `dbt build`. You can still run and inspect them by using `make run_dbt` which uses `dbt run` under the hood. 
+6. You can inspect the built models using any datbase management tool (e.g. DBeaver or TablePlus) on: `postgresql://postgres:postgres@localhost:5432/postgres`, as the Postgres container exposes port 5432.
+
+
 # Data Loading
 
 - Python script that iterates over all .csv files in the "raw data" folder.
