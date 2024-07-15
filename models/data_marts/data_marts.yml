@@ -27,7 +27,7 @@ models:
           aggregation_table_1: ref("dim_customer")
           aggregation_table_2: ref("fct_sales")
           aggregation_expression_1: "COUNT(DISTINCT country)"
-          aggregation_expression_2: "COUNT(DISTINCT DATE_TRUNC('month', order_date))"
+          aggregation_expression_2: "EXTRACT(YEAR FROM AGE(MAX(order_date), MIN(order_date))) * 12 + EXTRACT(MONTH FROM AGE(MAX(order_date), MIN(order_date))) + 1"
           operation: "*"
       # Does the total amount of all sales match with fct_sales?
       # In other words: Are all sales allocated to a cohort?
@@ -59,9 +59,11 @@ models:
     description: Fact model for sales
     tags: [data_mart, sales]
     tests:
+      # is the total amount always > 0?
       - dbt_utils.expression_is_true:
           expression: total_amount_od > 0 AND total_amount_p > 0
+      # Are the total_amount_... calculations correct?
       - dbt_utils.expression_is_true:
           expression: "ROUND((quantity::NUMERIC * unit_price_orderdetails::NUMERIC) * (1 - discount::NUMERIC), 2) = ROUND(total_amount_od, 2)"
       - dbt_utils.expression_is_true:
-          expression: "ROUND((quantity::NUMERIC * unit_price_product::NUMERIC) * (1 - discount::NUMERIC), 2) = ROUND(total_amount_p, 2)"
+          expression: "ROUND((quantity::NUMERIC * unit_price_products::NUMERIC) * (1 - discount::NUMERIC), 2) = ROUND(total_amount_p, 2)"
