@@ -3,7 +3,9 @@ SHELL := /bin/bash
 
 
 clean: 
+	@echo "Cleaning up dbt directories"
 	dbt clean
+	@echo "Cleaning up dbt containers"
 	@docker ps -a --filter "name=dbt-run" --format "{{.ID}}" | xargs docker rm -f
 
 enter_psql:
@@ -35,7 +37,6 @@ run_containers:
 
 stop_containers:
 	docker-compose --project-name feldm_case down
-
 
 setup:
 	@echo "Setting up python environment..."
