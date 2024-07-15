@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: dim_monthly_cohorts
+    description: Dimensional model for monthly cohorts
+    tags: [data_mart, cohort]
+    tests:
+      # Does the surrogate ID work?
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - cohort_month
+            - cohort_country
+      # Are the membership data coherent?
+      - count_equal_to_array_length:
+          count_column: customer_count
+          array_column: customer_ids
+      # Are all existing customers in a cohort?
+      # There might be customers who have never ordered so we need to filter them out
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          expression: SUM(customer_count)
+          compare_model: ref("dim_customer")
+          compare_expression: COUNT(customer_id)
+          compare_row_condition: "date_of_first_order IS NOT NULL"
+      # Is the length of the table equal to "number of months between earliest and latest order
+      # multiplied by number of distinct customer countries?"
+      - rowcount_equal_to_aggregations_from_other_tables:
+          aggregation_table_1: ref("dim_customer")
+          aggregation_table_2: ref("fct_sales")
+          aggregation_expression_1: "COUNT(DISTINCT table1.country)"
+          aggregation_expression_2: "COUNT(DISTINCT DATE_TRUNC('month', order_date))"
+          operation: "*"
+      # Does the total amount of all sales match with fct_sales?
+      # In other words: Are all sales allocated to a cohort?
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          expression: SUM(total_cohort_amount_od)
+          compare_model: ref("fct_sales")
+          compare_expression: SUM(total_amount_od)
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          expression: SUM(total_cohort_amount_p)
+          compare_model: ref("fct_sales")
+          compare_expression: SUM(total_amount_p)
