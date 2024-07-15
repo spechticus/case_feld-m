@@ -76,19 +76,23 @@ When looking at the results of our source tests, we encounter the following prob
 - TODO finish cleaning up dimensions (e.g. getting rid of numbers in cities)
 
 ## Workflow Step 4: Snapshotting
-In accordance with the [dbt best practices on snapshotting](https://docs.getdbt.com/docs/build/snapshots#snapshot-query-best-practices) , we are snapshotting our raw data BEFORE staging and do not alter the data if not absolutely necessary (resulting in a simple `SELECT *` query).
+In accordance with the [dbt best practices on snapshotting](https://docs.getdbt.com/docs/build/snapshots#snapshot-query-best-practices), we are snapshotting our raw data BEFORE staging and do not alter the data if not absolutely necessary (resulting in a simple `SELECT *` query).
 
-This gives us the ability to determine the point in time of certain state changes in our raw data, which might be necessary for legacy reports or reports over a longer period of time. If a customer moved house to a different state, they might contribute to different "sales by state" dimensions.
-Also more transaction-oriented tables like `order_details` might benefit from snapshotting if e.g. the discount or the quantity demanded would change.
+I opted for a "timestamp" strategy and used the `uploaded_at` column we created earlier in our Python loading script.
 
+This gives us the ability to determine the point in time of certain state changes in our raw data, which might be necessary for legacy reports or reports over a longer period of time. If a customer moved house to a different state, they might contribute to different "sales by state" dimensions depending on the timeframe in question.
+
+Also more transaction-oriented tables like `order_details` might benefit from snapshotting if e.g. the discount or the quantity demanded for a product in a given order would change.
 
 ## Workflow Step 5: Staging the raw data
-After testing, we want to extract
+After testing and snapshotting, we want to extract the snapshotted raw data into intermediary views, often called "staging".
 
+I added a couple of columns, mostly related to stripping special local characters (like Umlaute or so) from name columns for easier searching and matching AND because we have seen in our source tests above that this has been indeed a problem for data consistency (as in: mismatching data due to the presence and absence of special characters). 
+For this, I wrote some custom macros.
+
+>**Adding columns vs. joining from lookup tables:** When transforming central columns like names, or addresses that might be used by multiple models, the 
 
 ## Workflow Step 6: Transformation and Business Logic
-
-- I am implementing snapshots to keep track of slowly changing dimensions like customer, employees, or product properties. Thus, we can track changes over time and in a controlled manner and can e.g. correctly assign a customer to different states when comparing multiple time periods and so on. We will use the `uploaded_at` timestamp provided by our Python loading script.
 
 - addresses / localisation / de-localisation / standardisation: Architecture choice between adding normalised column to a table or creating separate tables with normalised data to be joined. Since I am using PostgreSQL which is row-based, adding more columns does not significantly alter performance AND since we are dealing with a small dataset.
 
